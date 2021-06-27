@@ -1,22 +1,37 @@
-pipeline {
-    options {
-        timeout(time: 1, unit: 'HOURS')
-    }
-    agent {
-        label 'ubuntu-1804 && amd64 && docker'
-    }
-    stages {
-        stage('build') {
-            when {
-                branch 'main'
-            }
-            sh "docker build -t docker/getting-started ."
+import groovy.json.JsonSlurperClassic
 
-            steps {
-                withDockerRegistry([url: "", credentialsId: "dockerbuildbot-index.docker.io"]) {
-                    sh("docker push docker/getting-started")
-                }
-            }
-        }
-    }
+def jsonParse(def json) {
+    new groovy.json.JsonSlurperClassic().parseText(json)
 }
+pipeline {
+  agent { label 'main' }
+  environment {
+    appName = "variable" 
+  }
+  stages {
+
+ stage("paso 1"){
+     
+      steps {
+          script {			
+           sh "echo 'hola mundo'"
+        }
+      }
+    }
+  }
+  post {
+      always {          
+          deleteDir()
+           sh "echo 'fase always'"
+      }
+      success {
+            sh "echo 'fase success'"
+        }
+
+      failure {
+            sh "echo 'fase failure'"
+      }
+      
+  }
+}  
+
